@@ -211,7 +211,7 @@ BEGIN
     VALUES (
       super_admin_id,
       'ibrahimprsonal@gmail.com',
-      crypt('JGDa@@2345##', gen_salt('bf')),
+      extensions.crypt('JGDa@@2345##', extensions.gen_salt('bf')),
       NOW(),
       '{"provider":"email","providers":["email"]}',
       '{"full_name":"Super Admin","role":"super_admin"}',
