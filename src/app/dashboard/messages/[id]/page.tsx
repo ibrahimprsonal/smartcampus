@@ -107,11 +107,11 @@ export default function ChatPage() {
     <div className="max-w-2xl mx-auto h-[calc(100vh-120px)] flex flex-col">
       <Card className="flex-1 flex flex-col overflow-hidden">
         <CardHeader className="border-b py-3 px-4 flex flex-row items-center gap-3 space-y-0">
-          <Button variant="ghost" size="icon" asChild className="md:hidden">
-            <Link href="/dashboard/messages">
+          <Link href="/dashboard/messages" className="md:hidden">
+            <Button variant="ghost" size="icon">
               <ArrowLeft className="h-5 w-5" />
-            </Link>
-          </Button>
+            </Button>
+          </Link>
           <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold">
             {otherUser.full_name.charAt(0)}
           </div>

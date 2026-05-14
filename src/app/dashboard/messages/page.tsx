@@ -9,6 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { toast } from 'sonner'
 import { MessageSquare, UserPlus, Check, X, Search } from 'lucide-react'
 import { Input } from '@/components/ui/input'
+import Link from 'next/link'
 
 export default function MessagesPage() {
   const supabase = createClient()

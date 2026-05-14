@@ -67,11 +67,11 @@ export default function NoticesPage() {
           <p className="text-gray-500">Stay updated with the latest campus news.</p>
         </div>
         {canCreate && (
-          <Button asChild>
-            <Link href="/dashboard/notices/create">
+          <Link href="/dashboard/notices/create">
+            <Button>
               <Plus className="h-4 w-4 mr-2" /> Create Notice
-            </Link>
-          </Button>
+            </Button>
+          </Link>
         )}
       </div>
 
@@ -107,12 +107,12 @@ export default function NoticesPage() {
                 {notice.notice_links.length > 0 && (
                   <div className="mt-4 flex flex-wrap gap-2">
                     {notice.notice_links.map((link: any) => (
-                      <Button key={link.id} variant="outline" size="sm" asChild>
-                        <a href={link.url} target="_blank" rel="noopener noreferrer">
+                      <a key={link.id} href={link.url} target="_blank" rel="noopener noreferrer">
+                        <Button variant="outline" size="sm">
                           <ExternalLink className="h-3 w-3 mr-2" />
                           {link.button_text}
-                        </a>
-                      </Button>
+                        </Button>
+                      </a>
                     ))}
                   </div>
                 )}

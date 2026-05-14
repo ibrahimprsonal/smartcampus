@@ -27,7 +27,7 @@ export default function Navbar({ profile }: NavbarProps) {
           {profile.role.toUpperCase()}
         </span>
         <DropdownMenu>
-          <DropdownMenuTrigger asChild>
+          <DropdownMenuTrigger>
             <Button variant="ghost" size="icon" className="rounded-full bg-gray-100">
               <User className="h-5 w-5" />
             </Button>

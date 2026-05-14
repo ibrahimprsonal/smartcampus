@@ -32,8 +32,8 @@ export default function RegisterPage() {
     setFormData({ ...formData, [e.target.name]: e.target.value })
   }
 
-  const handleRoleChange = (value: string) => {
-    setFormData({ ...formData, role: value })
+  const handleRoleChange = (value: string | null) => {
+    setFormData({ ...formData, role: value ?? 'student' })
   }
 
   const handleSubmit = async (e: React.FormEvent) => {

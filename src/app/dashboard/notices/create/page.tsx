@@ -123,7 +123,7 @@ export default function CreateNoticePage() {
                 <Label htmlFor="type">Notice Type</Label>
                 <Select 
                   defaultValue="notice" 
-                  onValueChange={v => setFormData({ ...formData, type: v })}
+                  onValueChange={v => setFormData({ ...formData, type: v ?? 'notice' })}
                 >
                   <SelectTrigger>
                     <SelectValue />
