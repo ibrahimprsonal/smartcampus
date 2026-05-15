@@ -18,10 +18,7 @@ export async function updateSession(request: NextRequest) {
           );
           supabaseResponse = NextResponse.next({ request });
           cookiesToSet.forEach(({ name, value, options }) =>
-            supabaseResponse.cookies.set(name, value, {
-              ...options,
-              maxAge: 36000, // 1 year (User explicitly signOut na kora porjonto active thakbe)
-            })
+            supabaseResponse.cookies.set(name, value, options)
           );
         },
       },
