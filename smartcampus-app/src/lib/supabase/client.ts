@@ -6,7 +6,7 @@ export function createClient() {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookieOptions: {
-        maxAge: 31536000, // 1 year (persistent login)
+        maxAge: 36000, // 1 year (persistent login)
         path: '/',
         sameSite: 'lax',
       }
