@@ -8,11 +8,6 @@ export async function updateSession(request: NextRequest) {
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
-      cookieOptions: {
-        maxAge: 31536000, // 1 year
-        path: '/',
-        sameSite: 'lax',
-      },
       cookies: {
         getAll() {
           return request.cookies.getAll();
@@ -25,7 +20,7 @@ export async function updateSession(request: NextRequest) {
           cookiesToSet.forEach(({ name, value, options }) =>
             supabaseResponse.cookies.set(name, value, {
               ...options,
-              maxAge: 31536000,
+              maxAge: 31536000, // 1 year (User explicitly signOut na kora porjonto active thakbe)
             })
           );
         },
@@ -33,7 +28,7 @@ export async function updateSession(request: NextRequest) {
     }
   );
 
-  // Refresh the session - important for Server Components
+  // Refresh the session - page refresh er somoy token expire hole auto refresh kore dibe
   await supabase.auth.getUser();
 
   return supabaseResponse;
