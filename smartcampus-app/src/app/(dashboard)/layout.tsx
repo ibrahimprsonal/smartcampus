@@ -36,7 +36,20 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     return () => clearInterval(interval);
   }, [user, supabase]);
 
-  if (isLoading || !profile) return <div className="loading-screen"><div className="spinner" style={{width:32,height:32}}></div><span>Loading Smart Campus...</span></div>;
+  if (isLoading) return <div className="loading-screen"><div className="spinner" style={{width:32,height:32}}></div><span>Loading Smart Campus...</span></div>;
+
+  if (!profile) {
+    return (
+      <div className="loading-screen">
+        <div style={{textAlign: 'center', color: '#fff'}}>
+          <div style={{marginBottom: '1rem', fontSize: '1.2rem'}}><i className="fas fa-exclamation-circle" style={{color: 'var(--accent-orange)'}}></i> Failed to load user profile</div>
+          <button onClick={async () => { await signOut(); router.push('/login'); }} style={{padding: '0.75rem 1.5rem', background: 'var(--accent)', border: 'none', borderRadius: '8px', color: '#fff', cursor: 'pointer', fontWeight: 600}}>
+            Sign Out & Try Again
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   const role = profile.role;
   const isActive = (path: string) => pathname === path ? 'active' : '';

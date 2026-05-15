@@ -22,15 +22,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const supabase = createClient();
+  const [supabase] = useState(() => createClient());
 
   const fetchProfile = useCallback(async (userId: string) => {
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from('users')
       .select('*')
       .eq('id', userId)
       .single();
-    if (data) setProfile(data as UserProfile);
+      
+    if (error) {
+      console.error("fetchProfile error:", error);
+    }
+    
+    if (data) {
+      setProfile(data as UserProfile);
+    } else {
+      setProfile(null);
+    }
+    
     return data as UserProfile | null;
   }, [supabase]);
 
@@ -39,25 +49,42 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [user, fetchProfile]);
 
   useEffect(() => {
+    let mounted = true;
+
     const init = async () => {
-      const { data: { session: s } } = await supabase.auth.getSession();
-      setSession(s);
-      setUser(s?.user ?? null);
-      if (s?.user) await fetchProfile(s.user.id);
-      setIsLoading(false);
+      try {
+        const { data: { session: s } } = await supabase.auth.getSession();
+        
+        if (!mounted) return;
+        setSession(s);
+        setUser(s?.user ?? null);
+        
+        if (s?.user) {
+          await fetchProfile(s.user.id);
+        }
+      } catch (err) {
+        console.error("Auth init error:", err);
+      } finally {
+        if (mounted) setIsLoading(false);
+      }
     };
+    
     init();
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (_event, s) => {
+      async (event, s) => {
+        if (!mounted) return;
+        
+        if (event === 'INITIAL_SESSION') {
+          // Handled by init() to avoid race conditions
+          return;
+        }
+
         setSession(s);
         setUser(s?.user ?? null);
+        
         if (s?.user) {
-          const fetchedProfile = await fetchProfile(s.user.id);
-          if (!fetchedProfile) {
-            // Error loading profile (e.g. RLS recursion or DB issue)
-            console.error("Failed to load user profile");
-          }
+          await fetchProfile(s.user.id);
         } else {
           setProfile(null);
         }
@@ -65,7 +92,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
     );
 
-    return () => subscription.unsubscribe();
+    return () => {
+      mounted = false;
+      subscription.unsubscribe();
+    };
   }, [supabase, fetchProfile]);
 
   const signIn = async (email: string, password: string) => {
