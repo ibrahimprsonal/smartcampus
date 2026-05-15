@@ -49,7 +49,7 @@ export default function RegisterPage() {
     await new Promise(r => setTimeout(r, 1500));
     const { data: { user: newUser } } = await supabase.auth.getUser();
     if (newUser) {
-      await supabase.from('users').update({
+      const { error: updateError } = await supabase.from('users').update({
         student_id: role === 'teacher' ? null : student_id,
         role, department: department || null,
         semester: semester ? parseInt(semester) : null,
@@ -57,6 +57,16 @@ export default function RegisterPage() {
         whatsapp_number: form.whatsapp_number || null,
         address: form.address || null,
       }).eq('id', newUser.id);
+      
+      if (updateError) {
+        setError(`Failed to save profile details: ${updateError.message}`);
+        setLoading(false);
+        return;
+      }
+    } else {
+      setError('Registration failed: User not created properly.');
+      setLoading(false);
+      return;
     }
     setSuccess('Registration successful! Your account is pending approval.');
     setLoading(false);
