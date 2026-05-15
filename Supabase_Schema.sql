@@ -269,19 +269,22 @@ CREATE INDEX idx_section_requests_user_id ON public.section_requests (user_id);
 -- This function automatically creates a new entry in the 'public.users' table
 -- whenever a new user signs up through Supabase Authentication.
 CREATE OR REPLACE FUNCTION public.handle_new_user_signup()
-RETURNS trigger SECURITY DEFINER AS $$
+RETURNS trigger 
+LANGUAGE plpgsql
+SECURITY DEFINER SET search_path = public
+AS $$
 BEGIN
   INSERT INTO public.users (id, full_name, email, role, status)
   VALUES (
     new.id,
     COALESCE(new.raw_user_meta_data->>'full_name', 'New Student'),
     new.email,
-    'student',
-    'pending'
+    'student'::public.user_role,
+    'pending'::public.user_status
   );
   RETURN new;
 END;
-$$ LANGUAGE plpgsql;
+$$;
 
 -- Trigger the handle_new_user_signup() function on new rows in auth.users
 CREATE TRIGGER on_auth_user_created
@@ -325,10 +328,19 @@ ON public.users FOR UPDATE TO authenticated
 USING (auth.uid() = id)
 WITH CHECK (auth.uid() = id);
 
--- 3. Super admins can manage everything in the users table
+-- 3. Function to safely get user role without infinite recursion
+CREATE OR REPLACE FUNCTION public.get_user_role()
+RETURNS public.user_role
+LANGUAGE sql
+SECURITY DEFINER SET search_path = public
+AS $$
+  SELECT role FROM public.users WHERE id = auth.uid();
+$$;
+
+-- 4. Super admins can manage everything in the users table
 CREATE POLICY "Allow admins full control over users"
 ON public.users TO authenticated
-USING (EXISTS (SELECT 1 FROM public.users WHERE id = auth.uid() AND role = 'super_admin'));
+USING (public.get_user_role() = 'super_admin');
 
 -- -------------------------------------------------------------
 -- DEPARTMENTS Policies

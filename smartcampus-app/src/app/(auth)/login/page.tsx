@@ -24,8 +24,16 @@ export default function LoginPage() {
     if (!email || !password) { setError('Email and password are required.'); return; }
     setLoading(true); setError('');
     const result = await signIn(email, password);
-    if (result.error) { setError(result.error); setLoading(false); return; }
-    // Auth state change will handle redirect
+    if (result.error) { 
+      setError(result.error); 
+      setLoading(false); 
+      return; 
+    }
+    
+    // Check if after 2 seconds the redirect hasn't happened due to a profile error
+    setTimeout(() => {
+      setLoading(false);
+    }, 2000);
   };
 
   if (isLoading) return <div className="loading-screen"><div className="spinner" style={{width:32,height:32}}></div></div>;

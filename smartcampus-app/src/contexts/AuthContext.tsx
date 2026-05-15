@@ -53,7 +53,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setSession(s);
         setUser(s?.user ?? null);
         if (s?.user) {
-          await fetchProfile(s.user.id);
+          const fetchedProfile = await fetchProfile(s.user.id);
+          if (!fetchedProfile) {
+            // Error loading profile (e.g. RLS recursion or DB issue)
+            console.error("Failed to load user profile");
+          }
         } else {
           setProfile(null);
         }
