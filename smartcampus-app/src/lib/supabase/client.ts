@@ -7,7 +7,6 @@ export function createClient() {
     {
       cookieOptions: {
         maxAge: 31536000, // 1 year (persistent login)
-        domain: '',
         path: '/',
         sameSite: 'lax',
       }

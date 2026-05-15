@@ -10,7 +10,6 @@ export async function updateSession(request: NextRequest) {
     {
       cookieOptions: {
         maxAge: 31536000, // 1 year
-        domain: '',
         path: '/',
         sameSite: 'lax',
       },
